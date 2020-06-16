@@ -37,7 +37,7 @@ parser.addArgument(['-i', '--interval'], {
 parser.addArgument(['-a', '--accept-author'], {
   type: String,
   dest: 'acceptedAuthors',
-  help: 'The username of a Github user the PRs of which can be automatically approved.',
+  help: 'The Github username whose PRs should be automatically approved.',
   action: 'append',
   metavar: 'USERNAME',
   defaultValue: [],
@@ -45,6 +45,13 @@ parser.addArgument(['-a', '--accept-author'], {
 
 const { org, slug, interval, acceptedAuthors } = parser.parseArgs();
 const { [tokenEnvVar]: token } = process.env;
+// Ensure unique values.
+const authors = [...new Set(acceptedAuthors)].filter(Boolean);
+
+if (authors.length === 0) {
+  error('Please specify at least one user who should get their PRs approved automatically.');
+  process.exit(1);
+}
 
 if (interval < intervalBounds.min || interval > intervalBounds.max) {
   error(`The interval to check for requested reviews must be between ${intervalBounds.min} and ${intervalBounds.max} minutes, while actually set to ${interval}.`);
@@ -61,6 +68,5 @@ module.exports = {
   slug,
   token,
   interval,
-  // Ensure unique values.
-  acceptedAuthors: [...new Set(acceptedAuthors)],
+  acceptedAuthors: authors,
 };

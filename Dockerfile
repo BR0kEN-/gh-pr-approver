@@ -1,5 +1,24 @@
 FROM node:current-alpine
 
+ARG GITHUB_ORGANIZATION
+ARG GITHUB_REPO_SLUG
+ARG GITHUB_ACCESS_TOKEN
+ARG GITHUB_ACCEPTED_AUTHORS
+ARG CHECK_INTERVAL
+
+RUN set -e; \
+    : "${GITHUB_ORGANIZATION:?The GITHUB_ORGANIZATION is required build argument!}"; \
+    : "${GITHUB_REPO_SLUG:?The GITHUB_REPO_SLUG is required build argument!}"; \
+    : "${GITHUB_ACCESS_TOKEN:?The GITHUB_ACCESS_TOKEN is required build argument!}"; \
+    : "${GITHUB_ACCEPTED_AUTHORS:?The GITHUB_ACCEPTED_AUTHORS is required build argument!}"; \
+    : "${CHECK_INTERVAL:?The CHECK_INTERVAL is required build argument!}"
+
+ENV GITHUB_ORGANIZATION="${GITHUB_ORGANIZATION}"
+ENV GITHUB_REPO_SLUG="${GITHUB_REPO_SLUG}"
+ENV GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN}"
+ENV GITHUB_ACCEPTED_AUTHORS="${GITHUB_ACCEPTED_AUTHORS}"
+ENV CHECK_INTERVAL="${CHECK_INTERVAL}"
+
 WORKDIR /app
 
 COPY src ./src
@@ -7,5 +26,6 @@ COPY package.json ./
 COPY package-lock.json ./
 
 RUN npm install
+RUN npm run build
 
-CMD ["npm", "start"]
+CMD ["ash", "run.sh"]

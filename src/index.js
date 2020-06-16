@@ -9,7 +9,11 @@ async function main() {
   const octokit = new Octokit({ auth: token });
   const { data: { login: approver } } = await octokit.users.getAuthenticated();
   let iteration = 0;
-  log(`Approver: ${approver}`);
+
+  log([
+    `PRs created by these users and requesting a review from ${approver} will be automatically approved:`,
+    ...acceptedAuthors.map((user) => `- ${user}`),
+  ]);
 
   // noinspection InfiniteLoopJS
   while (true) {

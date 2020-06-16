@@ -9,7 +9,8 @@
     "npm": ">=6"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "build": "node src/build.js"
   },
   "dependencies": {
     "@octokit/rest": "^18.0.0",

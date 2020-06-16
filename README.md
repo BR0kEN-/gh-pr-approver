@@ -1,5 +1,7 @@
 # Automated GitHub Pull Request approver
 
+The worker that automatically approves pull requests on Github from the authors you trust.
+
 ## Usage
 
 ```
@@ -21,8 +23,8 @@ Optional arguments:
                         The interval (in minutes) to check for requested
                         reviews (defaults to 10, minimum - 3, maximum - 120).
   -a USERNAME, --accept-author USERNAME
-                        The username of a Github user the PRs of which can be
-                        automatically approved.
+                        The Github username whose PRs should be automatically
+                        approved.
 ```
 
 ### Example
@@ -35,16 +37,47 @@ The PR can be automatically approved when the following rules met:
 - the PR requests a review from a user the access token belongs to.
 
 ```bash
-GITHUB_ACCESS_TOKEN=TOKEN npm start -- microsoft fluent --accept-author BR0kEN-
+export GITHUB_ACCESS_TOKEN=your_token
+npm start -- microsoft fluent --accept-author BR0kEN-
 ```
 
 **NOTES**:
 - the `GITHUB_ACCESS_TOKEN` environment variable is mandatory and must contain a valid Github access token that can be used for accessing the range of repositories you specify.
 - the worker will approve a PR again in case the previous review has been dismissed and the new one requested.
 
-### Docker
+### Heroku
 
-```bash
-docker build . -t gh-pr-approver:latest
-docker run --rm -e GITHUB_ACCESS_TOKEN=TOKEN gh-pr-approver npm start -- microsoft fluent --accept-author BR0kEN-
-```
+- Enable maintenance mode to put web UI offline.
+
+  ```bash
+  heroku maintenance:on --app gh-pr-approver
+  ```
+
+- Build and push the Docker image.
+
+  ```bash
+  heroku container:push gh-pr-approver \
+      --app gh-pr-approver \
+      --arg GITHUB_ORGANIZATION=microsoft,GITHUB_REPO_SLUG=fluent,GITHUB_ACCESS_TOKEN=your_token,GITHUB_ACCEPTED_AUTHORS=lokeoke+BR0kEN-,CHECK_INTERVAL=8
+  ```
+
+  **NOTES:**
+  - define multiple `--accept-author` by separating usernames using `+` (e.g. `user1+user2+user3`);
+
+- Release the app.
+
+  ```bash
+  heroku container:release gh-pr-approver --app gh-pr-approver
+  ```
+
+- Check containers and see how much free quota left.
+
+  ```bash
+  heroku ps --app gh-pr-approver
+  ```
+
+- Check the logs to see the app is working.
+
+  ```bash
+  heroku logs --app gh-pr-approver --num=50 --tail
+  ```
