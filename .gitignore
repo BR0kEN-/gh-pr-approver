@@ -1,0 +1,9 @@
+/*
+.*
+
+!/.git*
+!/README.md
+
+!/src/
+!/package.json
+!/package-lock.json
