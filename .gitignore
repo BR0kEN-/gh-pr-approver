@@ -2,8 +2,9 @@
 .*
 
 !/.git*
+!/Dockerfile
+!/package.json
+!/package-lock.json
 !/README.md
 
 !/src/
-!/package.json
-!/package-lock.json
