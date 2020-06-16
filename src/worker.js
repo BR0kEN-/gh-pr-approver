@@ -1,7 +1,7 @@
 const { log, skip } = require('./logger');
 
 /**
- * @param {Octokit} octokit
+ * @param {Octokit & RestEndpointMethods} octokit
  * @param {string} approver
  * @param {string} org
  * @param {string} slug

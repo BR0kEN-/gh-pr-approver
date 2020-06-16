@@ -1,11 +1,11 @@
 const { Octokit } = require('@octokit/rest');
 const { org, slug, token, interval, acceptedAuthors } = require('./arguments');
-const { log } = require('./logger');
+const { log, error } = require('./logger');
 const { worker } = require('./worker');
 
 const SLEEP_MILLISECONDS = interval * 60 * 1000;
 
-(async () => {
+async function main() {
   const octokit = new Octokit({ auth: token });
   const { data: { login: approver } } = await octokit.users.getAuthenticated();
   let iteration = 0;
@@ -18,4 +18,6 @@ const SLEEP_MILLISECONDS = interval * 60 * 1000;
     log(`The next check will be performed in ${interval} minutes.`);
     await new Promise((resolve) => setTimeout(() => process.nextTick(resolve), SLEEP_MILLISECONDS));
   }
-})();
+}
+
+main().catch((e) => error(e.toString()));
