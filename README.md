@@ -13,8 +13,7 @@ Automated GitHub Pull Request approver.
 Positional arguments:
   org                   The name of a Github organization.
   slug                  The partial match of a repository name. The smaller
-                        the name the more repositories will be selected. Use
-                        with caution.
+                        the name the more repositories will be selected.
 
 Optional arguments:
   -h, --help            Show this help message and exit.
@@ -43,9 +42,12 @@ npm start -- microsoft fluent --accept-author BR0kEN-
 
 **NOTES**:
 - the `GITHUB_ACCESS_TOKEN` environment variable is mandatory and must contain a valid Github access token that can be used for accessing the range of repositories you specify.
-- the worker will approve a PR again in case the previous review has been dismissed and the new one requested.
+- the worker will approve a PR again in case the previous review has been dismissed and the new one requested;
+- add as many `--accept-author` as you need.
 
-### Heroku
+## Heroku
+
+Deploy the worker to Heroku to serve 24/7.
 
 - Enable maintenance mode to put web UI offline.
 

@@ -17,7 +17,7 @@ parser.addArgument('org', {
 
 parser.addArgument('slug', {
   type: String,
-  help: 'The partial match of a repository name. The smaller the name the more repositories will be selected. Use with caution.',
+  help: 'The partial match of a repository name. The smaller the name the more repositories will be selected.',
 });
 
 parser.addArgument(['-i', '--interval'], {
