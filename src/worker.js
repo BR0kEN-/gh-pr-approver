@@ -62,7 +62,6 @@ async function worker(octokit, approver, org, slug, acceptedAuthors) {
         octokit.pulls
           .createReview({
             repo: head.repo.name,
-            body: '👍',
             owner: org,
             event: 'APPROVE',
             commit_id: head.sha,

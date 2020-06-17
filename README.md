@@ -72,6 +72,10 @@ Deploy the worker to Heroku to serve 24/7.
   heroku container:release gh-pr-approver --app gh-pr-approver
   ```
 
+- Make sure the resource enabled.
+
+  ![Enable the resource](docs/images/gh-pr-approver-heroku.gif)
+
 - Check containers and see how much free quota left.
 
   ```bash
