@@ -15,9 +15,9 @@ parser.addArgument('org', {
   help: 'The name of a Github organization.',
 });
 
-parser.addArgument('slug', {
+parser.addArgument('query', {
   type: String,
-  help: 'The partial match of a repository name. The smaller the name the more repositories will be selected.',
+  help: 'The query to find repositories (e.g. "fluent" or "fluent OR typescript").',
 });
 
 parser.addArgument(['-i', '--interval'], {
@@ -43,7 +43,7 @@ parser.addArgument(['-a', '--accept-author'], {
   defaultValue: [],
 });
 
-const { org, slug, interval, acceptedAuthors } = parser.parseArgs();
+const { org, query, interval, acceptedAuthors } = parser.parseArgs();
 const { [tokenEnvVar]: token } = process.env;
 // Ensure unique values.
 const authors = [...new Set(acceptedAuthors)].filter(Boolean);
@@ -65,7 +65,7 @@ if (typeof token !== 'string' || token.length < 40) {
 
 module.exports = {
   org,
-  slug,
+  query,
   token,
   interval,
   acceptedAuthors: authors,

@@ -1,5 +1,5 @@
 const { Octokit } = require('@octokit/rest');
-const { org, slug, token, interval, acceptedAuthors } = require('./arguments');
+const { org, query, token, interval, acceptedAuthors } = require('./arguments');
 const { log, error } = require('./logger');
 const { worker } = require('./worker');
 
@@ -18,7 +18,7 @@ async function main() {
   // noinspection InfiniteLoopJS
   while (true) {
     log(`Iteration #${++iteration}.`);
-    await worker(octokit, approver, org, slug, acceptedAuthors);
+    await worker(octokit, approver, org, query, acceptedAuthors);
     log(`The next check will be performed in ${interval} minutes.`);
     await new Promise((resolve) => setTimeout(() => process.nextTick(resolve), SLEEP_MILLISECONDS));
   }

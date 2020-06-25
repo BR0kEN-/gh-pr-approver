@@ -12,8 +12,8 @@ Automated GitHub Pull Request approver.
 
 Positional arguments:
   org                   The name of a Github organization.
-  slug                  The partial match of a repository name. The smaller
-                        the name the more repositories will be selected.
+  query                 The query to find repositories (e.g. "fluent" or
+                        "fluent OR typescript").
 
 Optional arguments:
   -h, --help            Show this help message and exit.
@@ -28,7 +28,7 @@ Optional arguments:
 
 ### Example
 
-This configuration starts a worker that checks for open PRs once in 10 minutes in the repositories of `microsoft` organization, containing the `fluent` in their names (see https://github.com/microsoft?q=fluent%20in:name).
+This configuration starts a worker that checks for open PRs once in 10 minutes in the repositories of `microsoft` organization, containing the `fluent` in their names (see https://github.com/microsoft?q=fluent%20in:name). You can also use logical operators like `OR` and `AND` to widen the results (e.g. `fluent OR typescript`, https://github.com/microsoft?q=fluent%20OR%20typescript%20in:name). See more at https://help.github.com/en/github/searching-for-information-on-github/searching-for-repositories.
 
 The PR can be automatically approved when the following rules met:
 - the PR is not a draft;
@@ -37,7 +37,7 @@ The PR can be automatically approved when the following rules met:
 
 ```bash
 export GITHUB_ACCESS_TOKEN=your_token
-npm start -- microsoft fluent --accept-author BR0kEN-
+npm start -- microsoft "fluent OR typescript" --accept-author BR0kEN-
 ```
 
 **NOTES**:
@@ -60,7 +60,7 @@ Deploy the worker to Heroku to serve 24/7.
   ```bash
   heroku container:push gh-pr-approver \
       --app gh-pr-approver \
-      --arg GITHUB_ORGANIZATION=microsoft,GITHUB_REPO_SLUG=fluent,GITHUB_ACCESS_TOKEN=your_token,GITHUB_ACCEPTED_AUTHORS=lokeoke+BR0kEN-,CHECK_INTERVAL=8
+      --arg GITHUB_ORGANIZATION=microsoft,GITHUB_REPOS_QUERY="fluent OR typescript",GITHUB_ACCESS_TOKEN=your_token,GITHUB_ACCEPTED_AUTHORS=lokeoke+BR0kEN-,CHECK_INTERVAL=8
   ```
 
   **NOTES:**

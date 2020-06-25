@@ -4,24 +4,23 @@ const { log, skip } = require('./logger');
  * @param {Octokit & RestEndpointMethods} octokit
  * @param {string} approver
  * @param {string} org
- * @param {string} slug
+ * @param {string} query
  * @param {string[]} acceptedAuthors
  *
  * @return {Promise<void>}
  */
-async function worker(octokit, approver, org, slug, acceptedAuthors) {
-  log(`Looking for repositories matching the "${org}/${slug}*" query.`);
-  const { data: { items: repos } } = await octokit.search.repos({
-    q: `org:${org}+${slug} in:name`,
-  });
+async function worker(octokit, approver, org, query, acceptedAuthors) {
+  const q = `org:${org}+${query} in:name`;
+  log(`Looking for repositories matching the "${q}" query.`);
+  const { data: { items: repos } } = await octokit.search.repos({ q });
 
   if (repos.length === 0) {
-    log(`No repositories matching the "${org}/${slug}*" query.`);
+    log(`No repositories matching the "${q}" query.`);
   } else {
     const repoNames = repos.map(({ name }) => `- ${name}`);
 
     log([
-      `${repoNames.length} repositories match the "${org}/${slug}*" query:`,
+      `${repoNames.length} repositories match the "${q}*" query:`,
       ...repoNames,
     ]);
 
