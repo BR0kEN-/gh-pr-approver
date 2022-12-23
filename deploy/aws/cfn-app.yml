@@ -67,7 +67,6 @@ Resources:
     Type: AWS::Events::Rule
     DependsOn:
       - GitHubPullRequestsApproverLambda
-      - GitHubPullRequestsApproverLambdaExecutionRole
     Properties:
       Name: !Sub "${GitHubPullRequestsApproverLambda}--scheduled-trigger"
       State: ENABLED

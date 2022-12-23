@@ -15,7 +15,7 @@ The AWS Free Tier is enough to serve multiple bot instances. Create an account, 
 >
 > In case there are many profiles, supply `AWS_PROFILE=my-profile`.
 
-```bash
+```shell
 AWS_REGION=eu-west-1 \
 AWS_ACCESS_KEY_ID=FFFFFFFFFFFFFFFFFFFF \
 AWS_SECRET_ACCESS_KEY=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF \
@@ -41,7 +41,7 @@ Each app gets organization-based resources naming, allowing you to create as man
 
 To delete the app, pass the GitHub organization name and `--down` option.
 
-```bash
+```shell
 AWS_REGION=eu-west-1 \
 AWS_ACCESS_KEY_ID=FFFFFFFFFFFFFFFFFFFF \
 AWS_SECRET_ACCESS_KEY=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF \

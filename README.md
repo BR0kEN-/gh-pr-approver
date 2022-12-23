@@ -36,7 +36,7 @@ The PR can be automatically approved when the following rules met:
 - the PR was created by users specified by the `--accept-author`;
 - the PR requests a review from a user the access token belongs to.
 
-```bash
+```shell
 export GITHUB_ACCESS_TOKEN=your_token
 npm run daemon -- microsoft "fluent OR typescript" --accept-author BR0kEN- --accept-author jondoe
 ```
@@ -47,11 +47,11 @@ npm run daemon -- microsoft "fluent OR typescript" --accept-author BR0kEN- --acc
 - The worker will approve a PR again in case the previous review has been dismissed and the new one requested.
 - Add as many `--accept-author` as you need.
 - It is possible to replace `npm run daemon` arguments with the environment variables. Example:
-  ```bash
+  ```shell
   export GITHUB_ACCESS_TOKEN=your_token
   export GITHUB_ORGANIZATION=microsoft
   export GITHUB_REPOS_QUERY="fluent OR typescript"
-  # Please note that the `+` character is a separator
+  # The `+` character is a separator
   # allowing to provide multiple users.
   export GITHUB_ACCEPTED_AUTHORS="BR0kEN-+jondoe"
   export CHECK_INTERVAL=5
