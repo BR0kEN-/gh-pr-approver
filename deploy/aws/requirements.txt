@@ -1,0 +1,1 @@
+https://github.com/aws/aws-cli/archive/2.9.9.tar.gz#egg=awscli

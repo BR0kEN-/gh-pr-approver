@@ -1,0 +1,88 @@
+Parameters:
+  CheckInterval:
+    Type: Number
+    MinValue: 3
+    MaxValue: 120
+
+  S3ArtifactPath:
+    Type: String
+    MinLength: 6
+
+  GitHubAcceptedAuthors:
+    Type: String
+    Default: "BR0kEN-+jondoe"
+    MinLength: 3
+
+  GitHubAccessToken:
+    Type: String
+    NoEcho: true
+    MinLength: 40
+
+  GitHubOrganization:
+    Type: String
+    Default: microsoft
+    MinLength: 2
+
+  GitHubReposQuery:
+    Type: String
+    Default: "fluent OR typescript"
+    MinLength: 2
+
+Resources:
+  GitHubPullRequestsApproverLambda:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - GitHubPullRequestsApproverResourcesBucket
+      - GitHubPullRequestsApproverLambdaExecutionRole
+    Properties:
+      Role: !GetAtt GitHubPullRequestsApproverLambdaExecutionRole.Arn
+      Handler: src/run.check
+      Timeout: 60
+      Runtime: nodejs16.x
+      MemorySize: 128
+      Description: "Check for the PRs pending review and approve them."
+      FunctionName: !Sub "${AppName}--worker"
+      Architectures:
+        - arm64
+      Code:
+        S3Bucket: !Ref GitHubPullRequestsApproverResourcesBucket
+        S3Key: !Ref S3ArtifactPath
+      Environment:
+        Variables:
+          GITHUB_ACCEPTED_AUTHORS: !Ref GitHubAcceptedAuthors
+          GITHUB_ACCESS_TOKEN: !Ref GitHubAccessToken
+          GITHUB_ORGANIZATION: !Ref GitHubOrganization
+          GITHUB_REPOS_QUERY: !Ref GitHubReposQuery
+          CHECK_INTERVAL: !Ref CheckInterval
+
+  GitHubPullRequestsApproverLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn:
+      - GitHubPullRequestsApproverLambda
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GitHubPullRequestsApproverLambda}"
+      RetentionInDays: 7
+
+  GitHubPullRequestsApproverLambdaExecutionRuleSchedule:
+    Type: AWS::Events::Rule
+    DependsOn:
+      - GitHubPullRequestsApproverLambda
+      - GitHubPullRequestsApproverLambdaExecutionRole
+    Properties:
+      Name: !Sub "${GitHubPullRequestsApproverLambda}--scheduled-trigger"
+      State: ENABLED
+      ScheduleExpression: !Sub "rate(${CheckInterval} minutes)"
+      Targets:
+        - Id: !Ref GitHubPullRequestsApproverLambda
+          Arn: !GetAtt GitHubPullRequestsApproverLambda.Arn
+
+  GitHubPullRequestsApproverLambdaExecutionRuleSchedulePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - GitHubPullRequestsApproverLambda
+      - GitHubPullRequestsApproverLambdaExecutionRuleSchedule
+    Properties:
+      FunctionName: !GetAtt GitHubPullRequestsApproverLambda.Arn
+      SourceArn: !GetAtt GitHubPullRequestsApproverLambdaExecutionRuleSchedule.Arn
+      Principal: events.amazonaws.com
+      Action: lambda:InvokeFunction

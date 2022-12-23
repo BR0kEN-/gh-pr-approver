@@ -1,34 +1,35 @@
 # Automated GitHub Pull Request approver
 
-The worker that automatically approves pull requests on Github from the authors you trust.
+The worker that automatically approves pull requests on GitHub from the authors you trust.
 
 ## Usage
 
 ```
-$ npm start -- -h
-usage: gh-pr-approver [-h] [-v] [-i INTERVAL] [-a USERNAME] org slug
+$ npm run daemon -- -h
+usage: gh-pr-approver [-h] [-i INTERVAL] [-a USERNAME] org query
 
 Automated GitHub Pull Request approver.
 
-Positional arguments:
-  org                   The name of a Github organization.
-  query                 The query to find repositories (e.g. "fluent" or
-                        "fluent OR typescript").
+positional arguments:
+  org                   The name of a GitHub organization. Can be superseded by the
+                        "GITHUB_ORGANIZATION" environment variable.
+  query                 The query to find repositories (e.g. "fluent" or "fluent OR typescript").
+                        Can be superseded by the "GITHUB_REPOS_QUERY" environment variable.
 
-Optional arguments:
-  -h, --help            Show this help message and exit.
-  -v, --version         Show program's version number and exit.
+optional arguments:
+  -h, --help            show this help message and exit
   -i INTERVAL, --interval INTERVAL
-                        The interval (in minutes) to check for requested
-                        reviews (defaults to 10, minimum - 3, maximum - 120).
+                        The interval (in minutes) to check for requested reviews (defaults to 10,
+                        minimum - 3, maximum - 120). Can be superseded by the "CHECK_INTERVAL"
+                        environment variable.
   -a USERNAME, --accept-author USERNAME
-                        The Github username whose PRs should be automatically
-                        approved.
+                        The GitHub usernames whose PRs should be automatically approved. Can be
+                        superseded by the "GITHUB_ACCEPTED_AUTHORS" environment variable.
 ```
 
 ### Example
 
-This configuration starts a worker that checks for open PRs once in 10 minutes in the repositories of `microsoft` organization, containing the `fluent` in their names (see https://github.com/microsoft?q=fluent%20in:name). You can also use logical operators like `OR` and `AND` to widen the results (e.g. `fluent OR typescript`, https://github.com/microsoft?q=fluent%20OR%20typescript%20in:name). See more at https://help.github.com/en/github/searching-for-information-on-github/searching-for-repositories.
+This configuration starts a worker that checks for open PRs once in 10 minutes in the repositories of `microsoft` organization, containing the `fluent` or `typescript` in their names (see https://github.com/orgs/microsoft/repositories?q=fluent+OR+typescript+in%3Aname). You can also use logical operators like `OR` and `AND` to widen the results (e.g. `fluent OR typescript OR gsl`, https://github.com/orgs/microsoft/repositories?q=fluent+OR+typescript+OR+gsl+in%3Aname). See more at https://help.github.com/en/github/searching-for-information-on-github/searching-for-repositories.
 
 The PR can be automatically approved when the following rules met:
 - the PR is not a draft;
@@ -37,53 +38,26 @@ The PR can be automatically approved when the following rules met:
 
 ```bash
 export GITHUB_ACCESS_TOKEN=your_token
-npm start -- microsoft "fluent OR typescript" --accept-author BR0kEN-
+npm run daemon -- microsoft "fluent OR typescript" --accept-author BR0kEN- --accept-author jondoe
 ```
 
-**NOTES**:
-- the `GITHUB_ACCESS_TOKEN` environment variable is mandatory and must contain a valid Github access token that can be used for accessing the range of repositories you specify.
-- the worker will approve a PR again in case the previous review has been dismissed and the new one requested;
-- add as many `--accept-author` as you need.
+#### Notes
 
-## Heroku
-
-Deploy the worker to Heroku to serve 24/7.
-
-- Enable maintenance mode to put web UI offline.
-
+- The `GITHUB_ACCESS_TOKEN` environment variable is mandatory and must contain a valid GitHub access token that can be used for accessing a range of repositories.
+- The worker will approve a PR again in case the previous review has been dismissed and the new one requested.
+- Add as many `--accept-author` as you need.
+- It is possible to replace `npm run daemon` arguments with the environment variables. Example:
   ```bash
-  heroku maintenance:on --app gh-pr-approver
+  export GITHUB_ACCESS_TOKEN=your_token
+  export GITHUB_ORGANIZATION=microsoft
+  export GITHUB_REPOS_QUERY="fluent OR typescript"
+  # Please note that the `+` character is a separator
+  # allowing to provide multiple users.
+  export GITHUB_ACCEPTED_AUTHORS="BR0kEN-+jondoe"
+  export CHECK_INTERVAL=5
+  npm run daemon
   ```
 
-- Build and push the Docker image.
+## Deploy
 
-  ```bash
-  heroku container:push gh-pr-approver \
-      --app gh-pr-approver \
-      --arg GITHUB_ORGANIZATION=microsoft,GITHUB_REPOS_QUERY="fluent OR typescript",GITHUB_ACCESS_TOKEN=your_token,GITHUB_ACCEPTED_AUTHORS=lokeoke+BR0kEN-,CHECK_INTERVAL=8
-  ```
-
-  **NOTES:**
-  - define multiple `--accept-author` by separating usernames using `+` (e.g. `user1+user2+user3`);
-
-- Release the app.
-
-  ```bash
-  heroku container:release gh-pr-approver --app gh-pr-approver
-  ```
-
-- Make sure the resource enabled.
-
-  ![Enable the resource](docs/images/gh-pr-approver-heroku.gif)
-
-- Check containers and see how much free quota left.
-
-  ```bash
-  heroku ps --app gh-pr-approver
-  ```
-
-- Check the logs to see the app is working.
-
-  ```bash
-  heroku logs --app gh-pr-approver --num=50 --tail
-  ```
+- [AWS](deploy/aws)

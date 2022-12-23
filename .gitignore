@@ -2,10 +2,10 @@
 .*
 
 !/.git*
-!/Dockerfile
-!/package.json
-!/package-lock.json
+!/package*.json
 !/README.md
 
+!/deploy/
+/deploy/*/build/
 !/docs/
 !/src/
