@@ -23,7 +23,4 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-
-args.base\
-    .extends_with(args.source)\
-    .save(args.target)
+args.base.extend_with(args.source).save(args.target)

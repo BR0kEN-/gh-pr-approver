@@ -17,7 +17,7 @@ class CloudformationFileYaml(str):
         except Exception as error:
             raise TypeError(f'The "{path}" is an invalid Cloudformation YAML file.') from error
 
-    def extends_with(self, another: CloudformationFileYaml) -> CloudformationFileYaml:
+    def extend_with(self, another: CloudformationFileYaml) -> CloudformationFileYaml:
         if self is another:
             raise ValueError(f'Extending "{self}" with itself is not possible.')
 

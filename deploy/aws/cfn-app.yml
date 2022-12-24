@@ -50,8 +50,8 @@ Resources:
       Environment:
         Variables:
           GITHUB_ACCEPTED_AUTHORS: !Ref GitHubAcceptedAuthors
-          GITHUB_ACCESS_TOKEN: !Ref GitHubAccessToken
           GITHUB_ORGANIZATION: !Ref GitHubOrganization
+          GITHUB_ACCESS_TOKEN: !Ref GitHubAccessToken
           GITHUB_REPOS_QUERY: !Ref GitHubReposQuery
           CHECK_INTERVAL: !Ref CheckInterval
 
@@ -67,7 +67,6 @@ Resources:
     Type: AWS::Events::Rule
     DependsOn:
       - GitHubPullRequestsApproverLambda
-      - GitHubPullRequestsApproverLambdaExecutionRole
     Properties:
       Name: !Sub "${GitHubPullRequestsApproverLambda}--scheduled-trigger"
       State: ENABLED
